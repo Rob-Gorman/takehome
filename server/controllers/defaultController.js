@@ -16,6 +16,7 @@ let id_map = {}
 let current_idx = 0
 
 const getNumbers = (req, res, next) => {
+  console.log(req.method)
   let resObj = PHONE_NUMBERS.map((number, ind) => {
     return {
       phone: number,
@@ -32,12 +33,14 @@ const startCalls = async(req, res, next) => {
   // req.body = `{phone: number, webhookURL: string}`
   // res.body = `{id: num, status: status}`
   // let inProcess = [{API_id: phones_arr_idx}]
+  console.log("POST / request processing")
   let callArr = []
   for (i = 0; i < 3 ; i++) {
-    callArr.push(startCall(req, res, next))
+    callArr.push(startCall())
+    console.log('callArr', callArr)
   }
   let respArr = await Promise.all(callArr)
-  console.log(respArr)
+  console.log('respArr', respArr)
   respArr.forEach(({id}, idx) => {
     id_map[id] = idx;
     console.log(id_map)
@@ -46,15 +49,18 @@ const startCalls = async(req, res, next) => {
 }
 
 const startCall = async(req, res, next) => {
+  console.log('in startCall')
   let number = PHONE_NUMBERS[current_idx]
   current_idx++
   let reqObj = {
     phone: number,
     webhookURL: webhookURL
   }
+  console.log('reqObj', reqObj)
 
   let APIres = await axios.post('http://localhost:4830/call', reqObj)
-  return APIres
+  console.log("APIres Body", APIres.data)
+  return APIres.data
 }
 
-module.exports = getNumbers, startCalls;
+module.exports = { getNumbers, startCalls, startCall };
