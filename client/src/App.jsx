@@ -24,6 +24,8 @@ function App() {
     fetchNumbers()
   }, [])
 
+  // is this appropriate management of the SSE connection?
+  // this App.jsx is getting pretty bloated. Is it time to extract phones to context? redux?
   useEffect(() => {
     if (sse) {
       function parseMessage(data) {
