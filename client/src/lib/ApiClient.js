@@ -27,4 +27,4 @@ export const startCalls = async() => {
   } catch (e) { logError(e) }
 }
 
-export const sse = new EventSource(`${URL}stream`)
+export const sse = new EventSource(`${URL}stream`) // need to catch error here?

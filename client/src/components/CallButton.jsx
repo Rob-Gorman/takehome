@@ -1,6 +1,8 @@
 import { useState } from "react"
 const { startCalls } = require("../lib/ApiClient")
 
+let sse;
+
 const CallButton = () => {
   const [buttonClass, setButtonClass] = useState('')
   const [buttonText, setButtonText] = useState('Call')
@@ -8,6 +10,7 @@ const CallButton = () => {
   const handleClick = () => {
     setButtonClass('disabled')
     setButtonText('Ring Ring')
+    sse = new EventSource(`${URL}stream`) // need to catch error here?
     startCalls()
   }
 
@@ -16,4 +19,4 @@ const CallButton = () => {
   )
 }
 
-export default CallButton
+export default CallButton, sse
