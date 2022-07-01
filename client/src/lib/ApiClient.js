@@ -1,7 +1,6 @@
 import axios from 'axios'
 
 const URL = `http://localhost:3001/`
-export const sse = new EventSource(`${URL}stream`)
 
 function logError(errorResponse) {
   const response = errorResponse.response;
@@ -27,3 +26,5 @@ export const startCalls = async() => {
     return data;
   } catch (e) { logError(e) }
 }
+
+export const sse = new EventSource(`${URL}stream`)

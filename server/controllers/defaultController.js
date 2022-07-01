@@ -66,11 +66,14 @@ const startCall = async(req, res, next) => {
 
 const webhookHandler = async(req, res, next) => {
   const {id, status} = req.body
-  console.log('webhook body', req.body)
   const phoneIdx = id_map[id]
   const sseData = { idx: phoneIdx, status: status }
   sse.send(sseData)
+
   if (status === 'completed' && current_idx < PHONE_NUMBERS.length) startCall()
+
+  // else reset current_idx to maintain functionality without server restart?
+  
   res.status(200).send()
 }
 

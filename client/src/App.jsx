@@ -1,6 +1,5 @@
 import React from 'react';
-import react, {useState, useEffect} from 'react'
-import { useCallback } from 'react';
+import {useState, useEffect, useCallback} from 'react'
 import CallButton from './components/CallButton';
 import Phone from './components/Phone';
 import { getPhones, sse } from './lib/ApiClient';
@@ -8,6 +7,7 @@ import { getPhones, sse } from './lib/ApiClient';
 function App() {
   const [ phones, setPhones ] = useState([]);
 
+  // important to close SSE connection?
   const evalSSEClose = useCallback(() => {
     let numCompleted = phones.filter(({status}) => status === 'completed').length
     if (numCompleted === phones.length) {
@@ -24,11 +24,10 @@ function App() {
   }, [])
 
   useEffect(() => {
-    console.log("in useEffect", phones)  // debugging
     function parseMessage(data) {
-      console.log('incoming wh data', data)  //debugging
+      // console.log('incoming webhook data', data)  //debugging
       let {idx, status} = JSON.parse(data)
-      console.log("idx, status", idx, status) //debugging
+      // console.log("idx, status", idx, status) //debugging
       let newState = phones.map(phoneObj => {
         if (phoneObj.idx === idx && phoneObj.status !== 'completed') {
           return {idx, status, phone: phoneObj.phone}
@@ -39,7 +38,7 @@ function App() {
       evalSSEClose()
     }
     sse.onmessage = e => parseMessage(e.data)
-  }, [phones])
+  }, [phones, evalSSEClose])
 
 
 
