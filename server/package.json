@@ -11,7 +11,8 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^0.27.2",
-    "express": "^4.18.1"
+    "express": "^4.18.1",
+    "express-sse": "^0.5.3"
   },
   "devDependencies": {
     "nodemon": "^2.0.18"

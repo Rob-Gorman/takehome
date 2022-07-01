@@ -1,4 +1,7 @@
 const axios = require('axios')
+const SSE = require('express-sse')
+const sse = new SSE();
+
 const webhookURL =   `http://localhost:3001/webhookURL`
 const PHONE_NUMBERS = [
 "13018040009",
@@ -37,30 +40,38 @@ const startCalls = async(req, res, next) => {
   let callArr = []
   for (i = 0; i < 3 ; i++) {
     callArr.push(startCall())
-    console.log('callArr', callArr)
   }
   let respArr = await Promise.all(callArr)
   console.log('respArr', respArr)
-  respArr.forEach(({id}, idx) => {
-    id_map[id] = idx;
-    console.log(id_map)
-  })
   res.json(respArr)
 }
 
 const startCall = async(req, res, next) => {
-  console.log('in startCall')
-  let number = PHONE_NUMBERS[current_idx]
+  let ind = current_idx
   current_idx++
+
+  let number = PHONE_NUMBERS[ind]
   let reqObj = {
     phone: number,
     webhookURL: webhookURL
   }
-  console.log('reqObj', reqObj)
+  
+  let {data} = await axios.post('http://localhost:4830/call', reqObj)
+  
+  id_map[data.id] = ind;
+  console.log(id_map)
 
-  let APIres = await axios.post('http://localhost:4830/call', reqObj)
-  console.log("APIres Body", APIres.data)
-  return APIres.data
+  return data
 }
 
-module.exports = { getNumbers, startCalls, startCall };
+const webhookHandler = async(req, res, next) => {
+  const {id, status} = req.body
+  console.log('webhook body', req.body)
+  const phoneIdx = id_map[id]
+  const sseData = { idx: phoneIdx, status: status }
+  sse.send(sseData)
+  if (status === 'completed' && current_idx < PHONE_NUMBERS.length) startCall()
+  res.status(200).send()
+}
+
+module.exports = { sse, getNumbers, startCalls, startCall, webhookHandler };
