@@ -27,8 +27,9 @@ export const startCalls = async() => {
   } catch (e) { logError(e) }
 }
 
+// Does this go here? Where should it go?
 export const initSSE = async () => {
-  return new EventSource(`${URL}stream`) // need to catch error here?
-  // console.log("we're making a sse", ret)
-  // return ret
+  try {
+    return new EventSource(`${URL}stream`)
+  } catch (e) { logError(e) }
 }

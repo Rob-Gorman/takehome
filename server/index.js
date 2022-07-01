@@ -4,6 +4,7 @@ const router = require('./routes/api')
 const PORT = 3001;
 const app = express();
 
+// `express-sse` package is broken. this is the custom fix.
 app.use(function (req, res, next) {
   res.flush = function () { /* Do nothing */ }
   next();

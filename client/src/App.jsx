@@ -27,26 +27,22 @@ function App() {
   useEffect(() => {
     if (sse) {
       function parseMessage(data) {
-        // console.log('incoming webhook data', data)  //debugging
         let {idx, status} = JSON.parse(data)
-        // console.log("idx, status", idx, status) //debugging
         let newState = phones.map(phoneObj => {
           if (phoneObj.idx === idx && phoneObj.status !== 'completed') {
             return {idx, status, phone: phoneObj.phone}
-          }
-          return phoneObj
+          } else return phoneObj
         })
+
         setPhones(newState)
         evalSSEClose()
       }
+
       sse.onmessage = e => parseMessage(e.data)
     }
   }, [phones, evalSSEClose, sse])
 
-
-
   if (!phones) return null
-
   return (
     <React.Fragment>
       <ul>
