@@ -27,4 +27,8 @@ export const startCalls = async() => {
   } catch (e) { logError(e) }
 }
 
-export const sse = new EventSource(`${URL}stream`) // need to catch error here?
+export const initSSE = async () => {
+  return new EventSource(`${URL}stream`) // need to catch error here?
+  // console.log("we're making a sse", ret)
+  // return ret
+}
